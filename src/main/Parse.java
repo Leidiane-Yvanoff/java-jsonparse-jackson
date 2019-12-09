@@ -1,33 +1,40 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Parse {
 
     private final static String JSON_WEATHER_PATH = "weather.json";
 
     public static void main(String[] args) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        
         try {
             // write your code here !
-
+        	ObjectMapper objectMapper = new ObjectMapper();
             // TODO : get the root from the file JSON_WEATHER_PATH
-            JsonNode root = null;
+            JsonNode rootArray = objectMapper.readTree(new File(JSON_WEATHER_PATH));
+            
 
             // TODO : get the value of "name" attribute
-            String cityName = null;
+            String cityName = rootArray.get("name").asText();
 
             // TODO : get the "lat" and "lon" values of the "coord"
-            Double cityLatitude = null;
-            Double cityLongitude = null;
+            JsonNode coord = rootArray.path("coord");
+            double cityLatitude = coord.get("lat").asDouble();
+           
+            double cityLongitude = coord.get("lon").asDouble();
 
             // TODO : get the "wind" attribute as an Wind object
-            Wind wind = null;
+            JsonNode  wind = rootArray.get("wind");
 
             // TODO : get the "weather" attribute as an array of Weather objects
-            Weather[] weathers = {};
+            
+            Weather[] weathers = objectMapper.convertValue(rootArray.withArray("weather"), Weather[].class);
+            
 
             // Don't touch this !
             System.out.printf("City name: %s%n", cityName);
